@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Veri Üretici - PharmaAtlas Contributor Tool</title>
+    <link rel="stylesheet" href="assets/styles.css">
+    <style>
+        .generator-container {
+            max-width: 800px;
+            margin: 4rem auto;
+            padding: 0 1rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 1rem;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border);
+            background: var(--bg-card);
+            color: var(--text-main);
+            font-family: 'Inter';
+        }
+
+        .output-area {
+            background: #1e293b;
+            color: #a5b4fc;
+            padding: 1.5rem;
+            border-radius: var(--radius-md);
+            font-family: monospace;
+            min-height: 200px;
+            white-space: pre-wrap;
+            margin-top: 2rem;
+        }
+
+        .btn-generate {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            font-weight: 600;
+            width: 100%;
+            transition: opacity 0.2s;
+        }
+
+        .btn-generate:hover {
+            opacity: 0.9;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 1rem;
+        }
+
+        .tab-btn {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            font-size: 1.1rem;
+            cursor: pointer;
+            padding: 0.5rem 1rem;
+            font-weight: 600;
+        }
+
+        .tab-btn.active {
+            color: var(--primary);
+            border-bottom: 2px solid var(--primary);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <div class="header-content">
+                <a href="index.html" class="logo">PharmaAtlas</a>
+                <div class="header-right">
+                    <a href="index.html">Siteye Dön</a>
+                </div>
+            </div>
+        </header>
+
+        <div class="generator-container">
+            <section class="hero hero-small" style="padding: 2rem 0; background: none; text-align: left;">
+                <h1>Veri Üretici 🛠️</h1>
+                <p>Topluluk katkısı için JSON formatında veri oluşturma aracı.</p>
+            </section>
+
+            <div class="tabs">
+                <button class="tab-btn active" onclick="switchTab('drug')">İlaç Ekle</button>
+                <button class="tab-btn" onclick="switchTab('company')">Firma Ekle</button>
+            </div>
+
+            <div id="drugForm">
+                <div class="form-group">
+                    <label>Barkod (13 Hane)</label>
+                    <input type="number" id="drugId" class="form-control" placeholder="869..." maxlength="13">
+                </div>
+                <div class="form-group">
+                    <label>İlaç Adı</label>
+                    <input type="text" id="drugName" class="form-control" placeholder="Örn: Parol 500mg Tablet">
+                </div>
+                <div class="form-group">
+                    <label>Form</label>
+                    <input type="text" id="drugFormInput" class="form-control" placeholder="Örn: Tablet, Şurup">
+                </div>
+                <div class="form-group">
+                    <label>Dozaj</label>
+                    <input type="text" id="drugDosage" class="form-control" placeholder="Örn: 500 mg">
+                </div>
+                <div class="form-group">
+                    <label>Firma ID'si (Bkz: companies.json)</label>
+                    <input type="number" id="drugCompanyId" class="form-control" placeholder="Örn: 1">
+                </div>
+                <div class="form-group">
+                    <label>Etken Madde ID'leri (Virgülle ayırın)</label>
+                    <input type="text" id="drugIngredients" class="form-control" placeholder="Örn: 101, 102">
+                </div>
+                <div class="form-group">
+                    <label>Wiki / Açıklama</label>
+                    <textarea id="drugWiki" class="form-control" rows="3"></textarea>
+                </div>
+                <button class="btn-generate" onclick="generateDrug()">JSON Oluştur</button>
+            </div>
+
+            <div id="companyForm" style="display:none;">
+                <div class="form-group">
+                    <label>Firma ID (Sıradaki numara)</label>
+                    <input type="number" id="companyId" class="form-control">
+                </div>
+                <div class="form-group">
+                    <label>Firma Adı</label>
+                    <input type="text" id="companyNameInput" class="form-control">
+                </div>
+                <div class="form-group">
+                    <label>Website</label>
+                    <input type="text" id="companyWebsite" class="form-control" placeholder="https://...">
+                </div>
+                <div class="form-group">
+                    <label>Hakkında</label>
+                    <textarea id="companyWikiInput" class="form-control" rows="3"></textarea>
+                </div>
+                <button class="btn-generate" onclick="generateCompany()">JSON Oluştur</button>
+            </div>
+
+            <div class="output-area" id="output">
+                // Oluşturulan JSON buraya gelecek...
+            </div>
+            <p style="font-size: 0.9rem; color: var(--text-muted); margin-top: 1rem;">Bu çıktıyı kopyalayıp ilgili JSON
+                dosyasındaki (data/drugs.json vb.) listenin sonuna virgül ekleyerek yapıştırın.</p>
+        </div>
+    </div>
+
+    <script src="assets/app.js"></script>
+    <script>
+        // Init Themes
+        ThemeManager.init();
+
+        function switchTab(tab) {
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById('drugForm').style.display = 'none';
+            document.getElementById('companyForm').style.display = 'none';
+
+            if (tab === 'drug') {
+                document.getElementById('drugForm').style.display = 'block';
+                event.target.classList.add('active');
+            } else {
+                document.getElementById('companyForm').style.display = 'block';
+                event.target.classList.add('active');
+            }
+        }
+
+        function generateDrug() {
+            const data = {
+                id: document.getElementById('drugId').value,
+                name: document.getElementById('drugName').value,
+                form: document.getElementById('drugFormInput').value,
+                dosage: document.getElementById('drugDosage').value,
+                company_id: parseInt(document.getElementById('drugCompanyId').value),
+                ingredient_ids: document.getElementById('drugIngredients').value.split(',').map(n => parseInt(n.trim())).filter(n => !isNaN(n)),
+                equivalent_ids: [],
+                wiki: document.getElementById('drugWiki').value
+            };
+
+            if (!data.id || !data.name) {
+                alert('Lütfen en az Barkod ve İlaç Adı girin.');
+                return;
+            }
+
+            const json = JSON.stringify(data, null, 4);
+            document.getElementById('output').textContent = ",\n" + json;
+        }
+
+        function generateCompany() {
+            const data = {
+                id: parseInt(document.getElementById('companyId').value),
+                name: document.getElementById('companyNameInput').value,
+                website: document.getElementById('companyWebsite').value,
+                wiki: document.getElementById('companyWikiInput').value
+            };
+
+            const json = JSON.stringify(data, null, 4);
+            document.getElementById('output').textContent = ",\n" + json;
+        }
+    </script>
+</body>
+
+</html>

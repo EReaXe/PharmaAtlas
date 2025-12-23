@@ -1,0 +1,20 @@
+{
+    "name": "PharmaAtlas",
+    "short_name": "PharmaAtlas",
+    "start_url": "index.html",
+    "display": "standalone",
+    "background_color": "#f3f4f6",
+    "theme_color": "#3b82f6",
+    "icons": [
+        {
+            "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><rect width='512' height='512' fill='%233b82f6'/><path d='M256 100l-60 120h120z' fill='white'/></svg>",
+            "sizes": "192x192",
+            "type": "image/svg+xml"
+        },
+        {
+            "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><rect width='512' height='512' fill='%233b82f6'/><path d='M256 100l-60 120h120z' fill='white'/></svg>",
+            "sizes": "512x512",
+            "type": "image/svg+xml"
+        }
+    ]
+}

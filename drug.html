@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>İlaç Detayı - PharmaAtlas</title>
+    <link rel="stylesheet" href="assets/styles.css">
+</head>
+
+<body>
+    <header>
+        <div class="container header-content">
+            <a href="index.html" class="logo">PharmaAtlas</a>
+            <div class="header-right">
+                <nav class="main-nav">
+                    <a href="index.html">Anasayfa</a>
+                    <a href="drugs.html">İlaçlar</a>
+                    <a href="companies.html">Firmalar</a>
+                    <a href="ingredients.html">Etken Maddeler</a>
+                </nav>
+                <button id="themeToggle" class="theme-toggle">🌙</button>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <div id="content" style="display:none;" class="fade-in">
+
+            <section class="hero hero-small">
+                <div class="breadcrumb">
+                    <a href="index.html">Anasayfa</a> > <a href="drugs.html">İlaçlar</a>
+                </div>
+                <h1 id="drugName"
+                    style="background: var(--primary-gradient); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;">
+                    Yükleniyor...</h1>
+                <div style="margin-top: 2rem;">
+                    <button id="favBtn" class="btn-fav">
+                        <span id="favIcon">🤍</span> Favorilere Ekle
+                    </button>
+                </div>
+            </section>
+
+            <div class="card">
+                <p><strong>Barkod:</strong> <span id="drugBarcode" class="tag"
+                        style="background:#e2e8f0; color:#475569;"></span></p>
+                <p><strong>Form:</strong> <span id="drugForm"></span></p>
+                <p><strong>Dozaj:</strong> <span id="drugDosage"></span></p>
+                <p><strong>Firma:</strong> <a id="companyLink" href="#">LOADING</a></p>
+
+                <h3>Etken Maddeler</h3>
+                <div id="ingredientsList" style="margin-bottom:1rem;"></div>
+
+                <h3>Açıklama / Wiki</h3>
+                <div class="wiki-content" id="drugWiki"></div>
+            </div>
+
+            <h2 class="section-title">Muadil İlaçlar</h2>
+            <div id="equivalentsList"></div>
+        </div>
+
+        <div id="error" style="display:none;" class="error">
+            İlaç bulunamadı veya geçersiz ID.
+        </div>
+    </div>
+
+    <footer class="glass-footer">
+        <div class="container">
+            <p>PharmaAtlas - Açık Kaynak İlaç Veritabanı</p>
+            <p>
+                <a href="https://github.com/google-deepmind/pharma-atlas" target="_blank">
+                    <span>🐙</span> GitHub Sayfası
+                </a>
+            </p>
+        </div>
+    </footer>
+
+    <script src="assets/app.js"></script>
+    <script>
+        document.addEventListener('pharmaDataReady', () => {
+            const id = APP.getQueryParam('id');
+            const drug = APP.findById(APP.data.drugs, id);
+
+            if (!drug) {
+                document.getElementById('error').style.display = 'block';
+                return;
+            }
+
+            document.getElementById('content').style.display = 'block';
+
+            // Basic Info
+            document.getElementById('drugName').textContent = drug.name;
+            document.getElementById('drugBarcode').textContent = drug.id;
+            document.getElementById('drugForm').textContent = drug.form;
+            document.getElementById('drugDosage').textContent = drug.dosage;
+            document.getElementById('drugWiki').textContent = drug.wiki || 'Açıklama yok.';
+
+            // Favorites Logic
+            const favBtn = document.getElementById('favBtn');
+            const updateFavBtn = () => {
+                const isFav = FavoritesManager.isFavorite(drug.id);
+                if (isFav) {
+                    favBtn.classList.add('active');
+                    favBtn.innerHTML = '<span id="favIcon">❤️</span> Favorilerde';
+                } else {
+                    favBtn.classList.remove('active');
+                    favBtn.innerHTML = '<span id="favIcon">🤍</span> Favorilere Ekle';
+                }
+            };
+
+            updateFavBtn(); // Initial state
+            favBtn.addEventListener('click', () => {
+                FavoritesManager.toggle(drug.id);
+                updateFavBtn();
+            });
+
+            // Company
+            const company = APP.findById(APP.data.companies, drug.company_id);
+            const companyLink = document.getElementById('companyLink');
+            if (company) {
+                companyLink.textContent = company.name;
+                companyLink.href = `company.html?id=${company.id}`;
+            } else {
+                companyLink.textContent = 'Bilinmiyor';
+            }
+
+            // Ingredients
+            const ingredientsContainer = document.getElementById('ingredientsList');
+            if (drug.ingredient_ids && drug.ingredient_ids.length > 0) {
+                drug.ingredient_ids.forEach(ingId => {
+                    const ing = APP.findById(APP.data.ingredients, ingId);
+                    if (ing) {
+                        const tag = document.createElement('a');
+                        tag.href = `ingredient.html?id=${ing.id}`;
+                        tag.className = 'tag';
+                        tag.textContent = ing.name;
+                        ingredientsContainer.appendChild(tag);
+                    }
+                });
+            } else {
+                ingredientsContainer.textContent = '-';
+            }
+
+            // Equivalents
+            const equivalents = [];
+            if (drug.equivalent_ids) {
+                drug.equivalent_ids.forEach(eqId => {
+                    const eqDrug = APP.findById(APP.data.drugs, eqId);
+                    if (eqDrug) equivalents.push(eqDrug);
+                });
+            }
+            APP.renderCards('equivalentsList', equivalents, 'drug');
+        });
+    </script>
+</body>
+
+</html>

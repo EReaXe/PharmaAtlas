@@ -1,0 +1,14 @@
+[
+  {
+    "id": "c-atabay",
+    "name": "ATABAY KİMYA SAN. VE TİC. A.Ş.",
+    "slug": "atabay-kimya",
+    "wiki": "1939 yılında Eczacı Ö. Kemalettin Atabay tarafından İstanbul’da kurulan Atabay, Türkiye’nin en köklü yerli ilaç ve etkin madde üreticilerinden biridir. Kuruluşundan bu yana, insan sağlığına katkı sunma hedefiyle hareket eden Atabay; bugün beşeri ilaçlardan biyoteknolojiye, veteriner ürünlerinden tarım ilaçlarına kadar geniş bir yelpazede faaliyet göstermektedir."
+  },
+  {
+    "id": "c-gsk",
+    "name": "GlaxoSmithKline İlaçları San. ve Tic. A.Ş.",
+    "slug": "glaxo-smith-kline",
+    "wiki": "GlaxoSmithKline, 1965 yılında Londra'da kurulan uluslararası ilaç şirketidir."
+  }
+]

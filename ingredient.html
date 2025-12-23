@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Etken Madde Detayı - PharmaAtlas</title>
+    <link rel="stylesheet" href="assets/styles.css">
+</head>
+
+<body>
+    <header>
+        <div class="container header-content">
+            <a href="index.html" class="logo">PharmaAtlas</a>
+            <div class="header-right">
+                <nav class="main-nav">
+                    <a href="index.html">Anasayfa</a>
+                    <a href="drugs.html">İlaçlar</a>
+                    <a href="companies.html">Firmalar</a>
+                    <a href="ingredients.html">Etken Maddeler</a>
+                </nav>
+                <button id="themeToggle" class="theme-toggle" aria-label="Temayı Değiştir">🌙</button>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <div id="content" style="display:none;" class="fade-in">
+            <section class="hero hero-small">
+                <div class="breadcrumb">
+                    <a href="index.html">Anasayfa</a> > <a href="ingredients.html">Etken Maddeler</a>
+                </div>
+                <h1 id="ingredientName"
+                    style="background: var(--primary-gradient); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;">
+                    Yükleniyor...</h1>
+            </section>
+
+            <div class="card">
+                <h3>Hakkında</h3>
+                <div class="wiki-content" id="ingredientWiki"></div>
+            </div>
+
+            <h2 class="section-title">Bu Maddeyi İçeren İlaçlar</h2>
+            <div id="ingredientDrugs"></div>
+        </div>
+
+        <div id="error" style="display:none;" class="error">
+            Etken madde bulunamadı.
+        </div>
+    </div>
+
+    <footer class="glass-footer">
+        <div class="container">
+            <p>PharmaAtlas - Açık Kaynak İlaç Veritabanı</p>
+            <p>
+                <a href="https://github.com/google-deepmind/pharma-atlas" target="_blank">
+                    <span>🐙</span> GitHub Sayfası
+                </a>
+            </p>
+        </div>
+    </footer>
+
+    <script src="assets/app.js"></script>
+    <script>
+        document.addEventListener('pharmaDataReady', () => {
+            const id = APP.getQueryParam('id');
+            const ingredient = APP.findById(APP.data.ingredients, id);
+
+            if (!ingredient) {
+                document.getElementById('error').style.display = 'block';
+                return;
+            }
+
+            document.getElementById('content').style.display = 'block';
+            document.getElementById('ingredientName').textContent = ingredient.name;
+            document.getElementById('ingredientWiki').textContent = ingredient.wiki || 'Açıklama yok.';
+
+            // Related Drugs
+            const relatedDrugs = APP.filterByIngredient(ingredient.id);
+            APP.renderCards('ingredientDrugs', relatedDrugs, 'drug');
+        });
+    </script>
+</body>
+
+</html>

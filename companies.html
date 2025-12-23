@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Firmalar - PharmaAtlas</title>
+    <link rel="stylesheet" href="assets/styles.css">
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <div class="header-content">
+                <a href="index.html" class="logo">PharmaAtlas</a>
+                <nav class="main-nav">
+                    <a href="index.html">Anasayfa</a>
+                    <a href="drugs.html">İlaçlar</a>
+                    <a href="companies.html" class="active">Firmalar</a>
+                    <a href="ingredients.html">Etken Maddeler</a>
+                </nav>
+                <button id="themeToggle" class="theme-toggle" aria-label="Temayı Değiştir">🌙</button>
+            </div>
+    </div>
+    </header>
+
+    <section class="hero hero-small">
+        <h1>İlaç Firmaları</h1>
+        <p>Türkiye'de ve dünyada faaliyet gösteren ilaç üreticileri.</p>
+        <div class="hero-search-container">
+            <input type="text" id="filterInput" class="search-input" placeholder="Firma ara...">
+        </div>
+    </section>
+
+    <div id="companiesList">
+        <p>Yükleniyor...</p>
+    </div>
+    </div>
+
+    <footer class="glass-footer">
+        <div class="container">
+            <p>PharmaAtlas - Açık Kaynak İlaç Veritabanı</p>
+            <p>
+                <a href="https://github.com/google-deepmind/pharma-atlas" target="_blank">
+                    <span>🐙</span> GitHub Sayfası
+                </a>
+            </p>
+        </div>
+    </footer>
+
+    <script src="assets/app.js"></script>
+    <script>
+        document.addEventListener('pharmaDataReady', () => {
+            const listContainer = 'companiesList';
+
+            // Initial Render
+            APP.renderCards(listContainer, APP.data.companies, 'company');
+
+            // Filter
+            document.getElementById('filterInput').addEventListener('input', (e) => {
+                const val = e.target.value.toLowerCase();
+                const filtered = APP.data.companies.filter(c => c.name.toLowerCase().includes(val));
+                APP.renderCards(listContainer, filtered, 'company');
+            });
+        });
+    </script>
+</body>
+
+</html>

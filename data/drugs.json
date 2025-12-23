@@ -1,0 +1,33 @@
+[
+    {
+        "id": "11111111111",
+        "name": "PAROL",
+        "slug": "parol",
+        "company_id": "c-atabay",
+        "ingredient_ids": [
+            "i-parasetamol"
+        ],
+        "form": "Tablet",
+        "dosage": "500 mg",
+        "wiki": "Detaylı Bilgi: https://www.atabay.com/wp-content/uploads/2022/02/PAROL-500-tablet-KT.pdf",
+        "equivalent_ids": [
+            "11111111111"
+        ]
+    },
+    {
+        "id": "22222222222",
+        "name": "AUGMENTIN-BID 1000mg",
+        "slug": "augmentin-bid-1000mg",
+        "company_id": "c-gsk",
+        "ingredient_ids": [
+            "i-amoksisilin",
+            "i-klavulanik-asit"
+        ],
+        "form": "Tablet",
+        "dosage": "1000 mg",
+        "wiki": "",
+        "equivalent_ids": [
+            "22222222222"
+        ]
+    }
+]

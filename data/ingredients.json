@@ -1,0 +1,20 @@
+[
+    {
+        "id": "i-parasetamol",
+        "name": "Parasetamol",
+        "slug": "parasetamol",
+        "wiki": "Ateş ve hafif ila orta şiddette ağrı tedavisinde kullanılan opioid olmayan analjezik ve antipiretik bir ajandır."
+    },
+    {
+        "id": "i-amoksisilin",
+        "name": "Amoksisilin",
+        "slug": "amoksisilin",
+        "wiki": "Antibiyotik bir ilaçtır."
+    },
+    {
+        "id": "i-klavulanik-asit",
+        "name": "Klavulanik Asit",
+        "slug": "klavulanik-asit",
+        "wiki": "Antibiyotik bir ilaçtır."
+    }
+]
