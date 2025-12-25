@@ -5,24 +5,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Etken Madde Detayı - PharmaAtlas</title>
-    <link rel="stylesheet" href="assets/styles.css">
+    <link rel="stylesheet" href="assets/css/styles.css">
 </head>
 
-<body>
-    <header>
-        <div class="container header-content">
-            <a href="index.html" class="logo">PharmaAtlas</a>
-            <div class="header-right">
-                <nav class="main-nav">
-                    <a href="index.html">Anasayfa</a>
-                    <a href="drugs.html">İlaçlar</a>
-                    <a href="companies.html">Firmalar</a>
-                    <a href="ingredients.html">Etken Maddeler</a>
-                </nav>
-                <button id="themeToggle" class="theme-toggle" aria-label="Temayı Değiştir">🌙</button>
-            </div>
-        </div>
-    </header>
+<body data-page="ingredients">
+
+    <header id="app-header"></header>
 
     <div class="container">
         <div id="content" style="display:none;" class="fade-in">
@@ -45,26 +33,26 @@
         </div>
 
         <div id="error" style="display:none;" class="error">
-            Etken madde bulunamadı.
+            <div style="text-align:center; padding: 5rem;">
+                <h2>Etken Madde Bulunamadı</h2>
+                <p>Aradığınız etken madde veritabanımızda mevcut değil.</p>
+                <a href="ingredients.html" class="btn-fav">Listeye Dön</a>
+            </div>
         </div>
     </div>
 
-    <footer class="glass-footer">
-        <div class="container">
-            <p>PharmaAtlas - Açık Kaynak İlaç Veritabanı</p>
-            <p>
-                <a href="https://github.com/google-deepmind/pharma-atlas" target="_blank">
-                    <span>🐙</span> GitHub Sayfası
-                </a>
-            </p>
-        </div>
-    </footer>
+    <footer id="app-footer"></footer>
 
-    <script src="assets/app.js"></script>
+    <script type="module" src="assets/js/main.js"></script>
+
     <script>
-        document.addEventListener('pharmaDataReady', () => {
-            const id = APP.getQueryParam('id');
-            const ingredient = APP.findById(APP.data.ingredients, id);
+        window.addEventListener('pharmaReady', (e) => {
+            const API = window.PharmaAPI;
+            const UI = window.PharmaUI;
+
+            const urlParams = new URLSearchParams(window.location.search);
+            const id = urlParams.get('id');
+            const ingredient = API.findById('ingredients', id);
 
             if (!ingredient) {
                 document.getElementById('error').style.display = 'block';
@@ -76,8 +64,9 @@
             document.getElementById('ingredientWiki').textContent = ingredient.wiki || 'Açıklama yok.';
 
             // Related Drugs
-            const relatedDrugs = APP.filterByIngredient(ingredient.id);
-            APP.renderCards('ingredientDrugs', relatedDrugs, 'drug');
+            const allDrugs = API.getData().drugs;
+            const relatedDrugs = allDrugs.filter(d => d.ingredient_ids && d.ingredient_ids.includes(ingredient.id));
+            UI.renderCards('ingredientDrugs', relatedDrugs, 'drug');
         });
     </script>
 </body>

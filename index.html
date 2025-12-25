@@ -5,24 +5,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PharmaAtlas - Premium Veritabanı</title>
-    <link rel="stylesheet" href="assets/styles.css">
+    <link rel="stylesheet" href="assets/css/styles.css">
 </head>
 
-<body>
-    <header>
-        <div class="container header-content">
-            <a href="index.html" class="logo">PharmaAtlas</a>
-            <div class="header-right">
-                <nav class="main-nav">
-                    <a href="index.html" class="active">Anasayfa</a>
-                    <a href="drugs.html">İlaçlar</a>
-                    <a href="companies.html">Firmalar</a>
-                    <a href="ingredients.html">Etken Maddeler</a>
-                </nav>
-                <button id="themeToggle" class="theme-toggle" aria-label="Temayı Değiştir">🌙</button>
-            </div>
-        </div>
-    </header>
+<body data-page="index">
+    
+    <!-- Shared Header Container -->
+    <header id="app-header"></header>
 
     <div class="container">
         <!-- Hero Section -->
@@ -36,6 +25,7 @@
             </div>
         </section>
 
+        <!-- Search Results -->
         <div id="resultsArea" style="display:none;">
             <div class="fade-in">
                 <h2 class="section-title">Sonuçlar</h2>
@@ -51,19 +41,9 @@
             </div>
         </div>
 
+        <!-- Dashboard -->
         <div id="dashboardArea">
-
-            <!-- Graph Section -->
-            <div style="text-align:center; margin-bottom: 2rem;">
-                <button id="loadGraphBtn" class="btn-fav" style="background: var(--bg-card);">
-                    🕸️ Veri Ağını Görüntüle (Beta)
-                </button>
-            </div>
-
-            <div id="graphContainer" class="graph-container" style="display:none;">
-                <canvas id="networkCanvas"></canvas>
-            </div>
-
+            
             <div class="stats-grid">
                 <div class="stat-card">
                     <span class="stat-number" id="statsDrugs">-</span>
@@ -88,76 +68,50 @@
         </div>
     </div>
 
-    <footer class="glass-footer">
-        <div class="container">
-            <p>PharmaAtlas - Açık Kaynak İlaç Veritabanı</p>
-            <p>
-                <a href="https://github.com/google-deepmind/pharma-atlas" target="_blank">
-                    <span>🐙</span> GitHub Sayfası
-                </a>
-            </p>
-        </div>
-    </footer>
+    <!-- Shared Footer Container -->
+    <footer id="app-footer"></footer>
 
-    <script src="assets/app.js"></script>
-    <script src="assets/graph.js"></script>
+    <!-- Main Module -->
+    <script type="module" src="assets/js/main.js"></script>
+
+    <!-- Page Specific Logic -->
     <script>
-        document.addEventListener('pharmaDataReady', () => {
-            // Stats
-            document.getElementById('statsDrugs').textContent = APP.data.drugs.length;
-            document.getElementById('statsCompanies').textContent = APP.data.companies.length;
-            document.getElementById('statsIngredients').textContent = APP.data.ingredients.length;
+        window.addEventListener('pharmaReady', (e) => {
+            const data = e.detail;
+            const API = window.PharmaAPI;
+            const UI = window.PharmaUI;
+            const Favorites = window.PharmaFavorites;
 
-            updateFavorites();
-            document.addEventListener('favoritesUpdated', updateFavorites);
+            // 1. Update Stats
+            UI.updateStats(data);
 
-            function updateFavorites() {
-                const favIds = FavoritesManager.getFavorites();
-                const favDrugs = APP.data.drugs.filter(d => favIds.includes(d.id));
-                APP.renderCards('favoritesList', favDrugs, 'drug');
-            }
+            // 2. Load Favorites
+            const favIds = Favorites.getFavorites();
+            const favDrugs = API.getFavorites(favIds);
+            UI.renderCards('favoritesList', favDrugs, 'drug');
 
-            // Search Logic
+            // 3. Search Logic
             const searchInput = document.getElementById('searchInput');
             const resultsArea = document.getElementById('resultsArea');
             const dashboardArea = document.getElementById('dashboardArea');
 
-            // Graph Logic
-            document.getElementById('loadGraphBtn').addEventListener('click', function () {
-                document.getElementById('graphContainer').style.display = 'block';
-                this.style.display = 'none'; // Hide button
-                APP.loadGraph();
-            });
+            if (searchInput) {
+                searchInput.focus();
+                searchInput.addEventListener('input', (e) => {
+                    const query = e.target.value;
+                    if (query.length < 2) {
+                        resultsArea.style.display = 'none';
+                        dashboardArea.style.display = 'block';
+                        return;
+                    }
 
-            // Focus animation helper
-            searchInput.focus();
+                    resultsArea.style.display = 'block';
+                    dashboardArea.style.display = 'none';
 
-            searchInput.addEventListener('input', (e) => {
-                const query = e.target.value;
-                if (query.length < 2) {
-                    resultsArea.style.display = 'none';
-                    dashboardArea.style.display = 'block';
-                    dashboardArea.classList.add('fade-in');
-                    return;
-                }
-
-                resultsArea.style.display = 'block';
-                dashboardArea.style.display = 'none';
-
-                const results = APP.search(query);
-                APP.renderCards('drugResults', results.drugs, 'drug');
-                APP.renderCards('companyResults', results.companies, 'company');
-                APP.renderCards('ingredientResults', results.ingredients, 'ingredient');
-            });
-
-            // Register Service Worker
-            if ('serviceWorker' in navigator) {
-                window.addEventListener('load', () => {
-                    navigator.serviceWorker.register('sw.js').then(reg => {
-                        console.log('SW Registered:', reg.scope);
-                    }).catch(err => {
-                        console.log('SW Registration Failed:', err);
-                    });
+                    const results = API.search(query);
+                    UI.renderCards('drugResults', results.drugs, 'drug');
+                    UI.renderCards('companyResults', results.companies, 'company');
+                    UI.renderCards('ingredientResults', results.ingredients, 'ingredient');
                 });
             }
         });

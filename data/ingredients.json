@@ -16,5 +16,11 @@
         "name": "Klavulanik Asit",
         "slug": "klavulanik-asit",
         "wiki": "Antibiyotik bir ilaçtır."
+    },
+    {
+        "id": "i-pantoprazol",
+        "name": "Pantoprazol",
+        "slug": "pantoprazol",
+        "wiki": "pantoprazol"
     }
 ]
