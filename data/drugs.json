@@ -1,8 +1,8 @@
 [
     {
         "id": "11111111111",
-        "name": "PAROL",
-        "slug": "parol",
+        "name": "Parol 500mg Tablet",
+        "slug": "parol-500mg",
         "company_id": "c-atabay",
         "ingredient_ids": [
             "i-parasetamol"
@@ -16,7 +16,7 @@
     },
     {
         "id": "22222222222",
-        "name": "AUGMENTIN-BID 1000mg",
+        "name": "Augmentin BID 1000mg Tablet",
         "slug": "augmentin-bid-1000mg",
         "company_id": "c-gsk",
         "ingredient_ids": [
@@ -28,6 +28,36 @@
         "wiki": "",
         "equivalent_ids": [
             "22222222222"
+        ]
+    },
+    {
+        "id": "33333333333",
+        "name": "Panto 40mg Tablet",
+        "slug": "panto-40mg",
+        "company_id": "c-sandoz",
+        "ingredient_ids": [
+            "i-pantoprazol"
+        ],
+        "form": "Tablet",
+        "dosage": "40 mg",
+        "wiki": "",
+        "equivalent_ids": [
+            "33333333333"
+        ]
+    },
+    {
+        "id": "44444444444",
+        "name": "Panadol 500mg Tablet",
+        "slug": "panadol-500mg",
+        "company_id": "c-gsk",
+        "ingredient_ids": [
+            "i-parasetamol"
+        ],
+        "form": "Tablet",
+        "dosage": "500 mg",
+        "wiki": "",
+        "equivalent_ids": [
+            "44444444444"
         ]
     }
 ]

@@ -10,5 +10,11 @@
     "name": "GlaxoSmithKline İlaçları San. ve Tic. A.Ş.",
     "slug": "glaxo-smith-kline",
     "wiki": "GlaxoSmithKline, 1965 yılında Londra'da kurulan uluslararası ilaç şirketidir."
+  },
+  {
+    "id": "c-sandoz",
+    "name": "Sandoz İlaç San. ve Tic. A.Ş.",
+    "slug": "sandoz-ilaclar",
+    "wiki": "Sandoz"
   }
 ]

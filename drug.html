@@ -5,24 +5,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>İlaç Detayı - PharmaAtlas</title>
-    <link rel="stylesheet" href="assets/styles.css">
+    <link rel="stylesheet" href="assets/css/styles.css">
 </head>
 
-<body>
-    <header>
-        <div class="container header-content">
-            <a href="index.html" class="logo">PharmaAtlas</a>
-            <div class="header-right">
-                <nav class="main-nav">
-                    <a href="index.html">Anasayfa</a>
-                    <a href="drugs.html">İlaçlar</a>
-                    <a href="companies.html">Firmalar</a>
-                    <a href="ingredients.html">Etken Maddeler</a>
-                </nav>
-                <button id="themeToggle" class="theme-toggle">🌙</button>
-            </div>
-        </div>
-    </header>
+<body data-page="drugs">
+
+    <header id="app-header"></header>
 
     <div class="container">
         <div id="content" style="display:none;" class="fade-in">
@@ -60,26 +48,28 @@
         </div>
 
         <div id="error" style="display:none;" class="error">
-            İlaç bulunamadı veya geçersiz ID.
+            <div style="text-align:center; padding: 5rem;">
+                <h2>İlaç Bulunamadı</h2>
+                <p>Aradığınız ilaç veritabanımızda mevcut değil veya silinmiş.</p>
+                <a href="index.html" class="btn-fav">Anasayfaya Dön</a>
+            </div>
         </div>
     </div>
 
-    <footer class="glass-footer">
-        <div class="container">
-            <p>PharmaAtlas - Açık Kaynak İlaç Veritabanı</p>
-            <p>
-                <a href="https://github.com/google-deepmind/pharma-atlas" target="_blank">
-                    <span>🐙</span> GitHub Sayfası
-                </a>
-            </p>
-        </div>
-    </footer>
+    <footer id="app-footer"></footer>
 
-    <script src="assets/app.js"></script>
+    <script type="module" src="assets/js/main.js"></script>
     <script>
-        document.addEventListener('pharmaDataReady', () => {
-            const id = APP.getQueryParam('id');
-            const drug = APP.findById(APP.data.drugs, id);
+        window.addEventListener('pharmaReady', (e) => {
+            const data = e.detail;
+            const API = window.PharmaAPI;
+            const UI = window.PharmaUI;
+            const Favorites = window.PharmaFavorites;
+
+            const urlParams = new URLSearchParams(window.location.search);
+            const id = urlParams.get('id');
+
+            const drug = API.findById('drugs', id);
 
             if (!drug) {
                 document.getElementById('error').style.display = 'block';
@@ -98,7 +88,7 @@
             // Favorites Logic
             const favBtn = document.getElementById('favBtn');
             const updateFavBtn = () => {
-                const isFav = FavoritesManager.isFavorite(drug.id);
+                const isFav = Favorites.isFavorite(drug.id);
                 if (isFav) {
                     favBtn.classList.add('active');
                     favBtn.innerHTML = '<span id="favIcon">❤️</span> Favorilerde';
@@ -108,14 +98,14 @@
                 }
             };
 
-            updateFavBtn(); // Initial state
+            updateFavBtn();
             favBtn.addEventListener('click', () => {
-                FavoritesManager.toggle(drug.id);
+                Favorites.toggle(drug.id);
                 updateFavBtn();
             });
 
             // Company
-            const company = APP.findById(APP.data.companies, drug.company_id);
+            const company = API.findById('companies', drug.company_id);
             const companyLink = document.getElementById('companyLink');
             if (company) {
                 companyLink.textContent = company.name;
@@ -128,7 +118,7 @@
             const ingredientsContainer = document.getElementById('ingredientsList');
             if (drug.ingredient_ids && drug.ingredient_ids.length > 0) {
                 drug.ingredient_ids.forEach(ingId => {
-                    const ing = APP.findById(APP.data.ingredients, ingId);
+                    const ing = API.findById('ingredients', ingId);
                     if (ing) {
                         const tag = document.createElement('a');
                         tag.href = `ingredient.html?id=${ing.id}`;
@@ -145,11 +135,11 @@
             const equivalents = [];
             if (drug.equivalent_ids) {
                 drug.equivalent_ids.forEach(eqId => {
-                    const eqDrug = APP.findById(APP.data.drugs, eqId);
+                    const eqDrug = API.findById('drugs', eqId);
                     if (eqDrug) equivalents.push(eqDrug);
                 });
             }
-            APP.renderCards('equivalentsList', equivalents, 'drug');
+            UI.renderCards('equivalentsList', equivalents, 'drug');
         });
     </script>
 </body>
